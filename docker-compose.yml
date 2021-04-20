@@ -8,8 +8,6 @@ services:
         volumes:
         -   .:/var/www/html
         working_dir: /var/www/html
-        extra_hosts:
-            - "host.docker.internal:host-gateway"
 
     nginx:
         image: nginx
@@ -21,3 +19,12 @@ services:
         -   8191:80
         depends_on:
         -   php
+
+    mysql:
+        image: mysql
+        container_name: mysql.p2p.local
+        environment:
+            MYSQL_ROOT_PASSWORD: p2p
+            MYSQL_DATABASE: p2p
+        volumes:
+        -   ./var/docker/mysql:/var/lib/mysql
