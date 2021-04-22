@@ -9,7 +9,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @Route(path="/api/p2p-transfer")
  */
-class P2PTransfer extends AbstractController
+class P2PTransferController extends AbstractController
 {
     /**
      * @Route(methods={"POST"}, name="api.p2p-transfer.make-transfer")
