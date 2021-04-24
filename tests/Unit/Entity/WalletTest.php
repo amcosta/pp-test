@@ -41,11 +41,21 @@ class WalletTest extends TestCase
         self::assertEquals(300, $this->wallet->getAmount());
     }
 
-    public function testShouldNotWithdrawIfWalletDoesntHaveEnoughMoney()
+    public function testShouldNotWithdrawIfWalletDoestHaveEnoughMoney()
     {
         self::expectException(WalletException::class);
 
         $this->wallet->deposit(100);
         $this->wallet->withdraw(200);
+    }
+
+    public function testShouldTransferToAnotherWallet()
+    {
+        $otherWallet = new Wallet(new User, 100);
+        $this->wallet->deposit(35);
+        $this->wallet->transferTo($otherWallet, 35);
+
+        self::assertEquals(135, $otherWallet->getAmount());
+        self::assertEquals(0, $this->wallet->getAmount());
     }
 }

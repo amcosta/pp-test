@@ -2,12 +2,12 @@
 
 namespace App\Controller;
 
-use App\DTO\MakeP2PTransferRequest;
-use App\Form\MakeP2PTransferType;
-use App\Repository\UserRepository;
+use App\Entity\P2PTransaction;
+use App\Form\P2PTransactionType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * @Route(path="/api/p2p-transfer")
@@ -15,13 +15,13 @@ use Symfony\Component\Routing\Annotation\Route;
 class P2PTransferController extends AbstractController
 {
     /**
-     * @var UserRepository
+     * @var Security
      */
-    private UserRepository $userRepository;
+    private Security $security;
 
-    public function __construct(UserRepository $userRepository)
+    public function __construct(Security $security)
     {
-        $this->userRepository = $userRepository;
+        $this->security = $security;
     }
 
     /**
@@ -29,18 +29,19 @@ class P2PTransferController extends AbstractController
      */
     public function makeTransfer(Request $request)
     {
-        $form = $this->createForm(MakeP2PTransferType::class, new MakeP2PTransferRequest());
+        $transaction = new P2PTransaction();
+        $transaction->setPayer($this->security->getUser());
+
+        $form = $this->createForm(P2PTransactionType::class, $transaction);
         $form->submit($request->request->all());
 
         if ($form->isValid()) {
-            $data = $form->getData();
-            return $this->json(['name' => $data->getAmount()]);
+            $transaction = $form->getData();
+            return $this->json(['name' => $transaction->getAmount()]);
         }
 
         foreach ($form->getErrors() as $error) {
             echo $error->getMessage();
         }
-
-        return $this->json(array_reduce((array) $form->getErrors(), function () {}));
     }
 }

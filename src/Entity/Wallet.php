@@ -59,4 +59,10 @@ class Wallet
 
         $this->amount -= $value;
     }
+
+    public function transferTo(Wallet $wallet, float $amount): void
+    {
+        $this->withdraw($amount);
+        $wallet->deposit($amount);
+    }
 }

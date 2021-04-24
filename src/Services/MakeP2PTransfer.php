@@ -2,37 +2,46 @@
 
 namespace App\Services;
 
-use App\DTO\MakeP2PTransferRequest;
+use App\Entity\P2PTransaction;
 use App\Entity\Wallet;
+use App\Events\P2PTransactionCreated;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class MakeP2PTransfer
 {
     private EntityManagerInterface $entityManager;
     private Authorization $authorization;
+    private EventDispatcher $dispatcher;
 
-    public function __construct(EntityManagerInterface $entityManager, Authorization $authorization)
+    public function __construct(EntityManagerInterface $entityManager,
+                                Authorization $authorization,
+                                EventDispatcher $dispatcher)
     {
         $this->entityManager = $entityManager;
         $this->authorization = $authorization;
+        $this->dispatcher = $dispatcher;
     }
 
-    public function execute(MakeP2PTransferRequest $request)
+    public function execute(P2PTransaction $transaction)
     {
-        $payee = $request->getPayee();
-        $payer = $request->getPayer();
+        $payee = $transaction->getPayee();
+        $payer = $transaction->getPayer();
 
         $this->authorization->checkUser($payer);
-        $this->updateWallets($request->getAmount(), $payer->getWallet(), $payee->getWallet());
+        $this->movementMoney($transaction->getAmount(), $payer->getWallet(), $payee->getWallet());
+
+        $this->entityManager->persist($transaction);
+        $this->entityManager->flush();
+
+        $this->dispatcher->dispatch(new P2PTransactionCreated($transaction), P2PTransactionCreated::EVENT_NAME);
     }
 
-    private function updateWallets(float $amount, Wallet $payerWallet, Wallet $payeeWallet): void
+    private function movementMoney(float $amount, Wallet $payerWallet, Wallet $payeeWallet): void
     {
-        $payerWallet->withdraw($amount);
-        $payeeWallet->deposit($amount);
+        $payerWallet->transferTo($payeeWallet, $amount);
 
         $this->entityManager->persist($payerWallet);
         $this->entityManager->persist($payeeWallet);
-        $this->entityManager->flush();
     }
 }

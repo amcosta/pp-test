@@ -18,3 +18,7 @@ RUN pecl install xdebug \
     && echo "xdebug.mode=debug" >> /usr/local/etc/php/conf.d/xdebug.ini \
 #    && echo "xdebug.start_with_request=yes" >> /usr/local/etc/php/conf.d/xdebug.ini \
     && docker-php-ext-enable xdebug
+
+COPY . /var/www/html
+WORKDIR /var/www/html
+RUN composer install

@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Exceptions\WalletException;
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -44,6 +45,11 @@ class User implements UserInterface
      * @ORM\OneToOne(targetEntity="App\Entity\Wallet", mappedBy="user")
      */
     private Wallet $wallet;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\P2PTransaction")
+     */
+    private Collection $p2pTransactions;
 
     public function getId(): ?int
     {
