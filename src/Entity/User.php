@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Exceptions\WalletException;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -38,6 +39,11 @@ class User implements UserInterface
      * @ORM\Column(type="string")
      */
     private string $name;
+
+    /**
+     * @ORM\OneToOne(targetEntity="App\Entity\Wallet", mappedBy="user")
+     */
+    private Wallet $wallet;
 
     public function getId(): ?int
     {
@@ -120,5 +126,10 @@ class User implements UserInterface
     {
         $this->name = $name;
         return $this;
+    }
+
+    public function getWallet(): Wallet
+    {
+        return $this->wallet;
     }
 }
