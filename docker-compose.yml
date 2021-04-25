@@ -29,3 +29,12 @@ services:
             MYSQL_DATABASE: p2p
         volumes:
         -   ./var/docker/mysql:/var/lib/mysql
+
+    json-server:
+        build: ./docker/json-server
+        container_name: json-server.p2p.local
+        ports:
+            - '3000:3000'
+        volumes:
+            - ./docker/json-server/db.json:/data/db.json
+        command: json-server --watch db.json --host 0.0.0.0

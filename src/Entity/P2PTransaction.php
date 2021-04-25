@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=P2PTransactionRepository::class)
+ * @ORM\Table(name="p2p_transaction")
  */
 class P2PTransaction
 {
@@ -19,12 +20,12 @@ class P2PTransaction
     private int $id;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\User", mappedBy="p2pTransactions")
+     * @ORM\ManyToOne(targetEntity="App\Entity\User")
      */
     private User $payer;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\User", mappedBy="p2pTransactions")
+     * @ORM\ManyToOne(targetEntity="App\Entity\User")
      */
     private User $payee;
 
@@ -32,7 +33,6 @@ class P2PTransaction
      * @ORM\Column(type="decimal", precision=10, scale=2)
      */
     private float $amount;
-
 
     private DateTime $createdAt;
 

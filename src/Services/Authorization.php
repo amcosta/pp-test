@@ -25,7 +25,7 @@ class Authorization
             throw new HttpException(504, 'Authorization service unavailable');
         }
 
-        $data = json_decode($response->getBody(), true);
+        $data = json_decode($response->getBody()->getContents(), true);
         if ($data['authorized'] === false) {
             throw new AuthorizationException('Payer isn\'t authorized');
         }

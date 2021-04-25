@@ -46,11 +46,6 @@ class User implements UserInterface
      */
     private Wallet $wallet;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\P2PTransaction")
-     */
-    private Collection $p2pTransactions;
-
     public function getId(): ?int
     {
         return $this->id;

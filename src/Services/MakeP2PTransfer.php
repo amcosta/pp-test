@@ -4,23 +4,17 @@ namespace App\Services;
 
 use App\Entity\P2PTransaction;
 use App\Entity\Wallet;
-use App\Events\P2PTransactionCreated;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class MakeP2PTransfer
 {
     private EntityManagerInterface $entityManager;
     private Authorization $authorization;
-    private EventDispatcher $dispatcher;
 
-    public function __construct(EntityManagerInterface $entityManager,
-                                Authorization $authorization,
-                                EventDispatcher $dispatcher)
+    public function __construct(EntityManagerInterface $entityManager, Authorization $authorization)
     {
         $this->entityManager = $entityManager;
         $this->authorization = $authorization;
-        $this->dispatcher = $dispatcher;
     }
 
     public function execute(P2PTransaction $transaction)
@@ -33,8 +27,6 @@ class MakeP2PTransfer
 
         $this->entityManager->persist($transaction);
         $this->entityManager->flush();
-
-        $this->dispatcher->dispatch(new P2PTransactionCreated($transaction), P2PTransactionCreated::EVENT_NAME);
     }
 
     private function movementMoney(float $amount, Wallet $payerWallet, Wallet $payeeWallet): void

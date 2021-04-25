@@ -3,7 +3,7 @@
 namespace App\Form;
 
 use App\Entity\P2PTransaction;
-use Doctrine\ORM\Mapping\Entity;
+use App\Entity\User;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
@@ -18,8 +18,9 @@ class P2PTransactionType extends AbstractType
             ->add('amount', MoneyType::class, ['required' => true])
             ->add('payee_id', EntityType::class, [
                 'required' => true,
-                'class' => P2PTransaction::class,
-                'property_path' => 'payee'
+                'class' => User::class,
+                'property_path' => 'payee',
+                'invalid_message' => 'Payee not found'
             ])
         ;
     }
